@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { neutral: { 850: '#1f1f1f', 950: '#0a0a0a' } } } }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-neutral-950 text-neutral-200 overflow-hidden text-sm font-sans flex flex-row h-screen antialiased selection:bg-neutral-700">
+
+  <aside id="sidebar" class="w-80 flex-shrink-0 bg-[#171717] border-r border-neutral-800 flex flex-col h-full z-50 custom-scrollbar overflow-y-auto">
+
+    <div class="p-5 border-b border-neutral-800 flex justify-between items-center">
+      <h1 class="font-bold text-base tracking-widest">Controller</h1>
+    </div>
+
+    <div class="flex-1 pb-10">
+
+      <details class="group border-b border-neutral-800" open>
+        <summary class="flex justify-between items-center px-5 py-3.5 cursor-pointer select-none font-medium hover:bg-neutral-800/50 transition-colors">
+          <span>Ambiente & Canvas</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 transition-transform group-open:-rotate-180"></i>
+        </summary>
+        <div class="px-5 pb-4 space-y-4">
+          <div class="bg-neutral-850 rounded p-2.5 border border-neutral-800">
+            <div class="text-[10px] text-neutral-500 mb-1.5 flex justify-between">
+              <span>FORMATO TELA</span>
+              <span id="hud-res-label" class="font-mono text-neutral-400">1080x1440</span>
+            </div>
+            <select id="canvasFormat" class="w-full bg-neutral-900 border border-neutral-700 text-xs p-1.5 rounded text-neutral-200 outline-none focus:border-neutral-500 font-mono">
+              <option value="1080,1440">Portrait (1080x1440)</option>
+              <option value="1080,1920">Story (1080x1920)</option>
+              <option value="1920,1080">Landscape (1920x1080)</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <details class="group border-b border-neutral-800" open>
+        <summary class="flex justify-between items-center px-5 py-3.5 cursor-pointer select-none font-medium hover:bg-neutral-800/50 transition-colors">
+          <span>Testo & Stile</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 transition-transform group-open:-rotate-180"></i>
+        </summary>
+        <div class="px-5 pb-4 space-y-4">
+          
+          <div class="border-b border-neutral-800 pb-3">
+            <div class="text-[10px] text-neutral-500 mb-1.5">PAROLA / LETTERA</div>
+            <input type="text" id="wordInput" value="A" class="w-full bg-neutral-900 border border-neutral-700 text-2xl p-2 rounded text-neutral-100 outline-none focus:border-[#ffff00] font-mono text-center tracking-widest uppercase">
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] text-neutral-500">FONT</span>
+              <span id="hud-font" class="text-[10px] font-mono text-neutral-400">Times New Roman</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] text-neutral-500">ANIMAZIONE</span>
+              <span id="hud-anim" class="text-[10px] font-mono text-neutral-400">Static</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] text-neutral-500">EFFETTO</span>
+              <span id="hud-effect" class="text-[10px] font-mono text-neutral-400">Nessuno</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] text-neutral-500">FUSIONE LIVELLO</span>
+              <span id="hud-blend" class="text-[10px] font-mono text-blue-400 font-bold">Normale</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] text-neutral-500">COLORE BASE</span>
+              <div class="flex items-center gap-2">
+                <input type="color" id="colorPicker" value="#ffffff" class="w-4 h-4 p-0 border-0 bg-transparent cursor-pointer rounded-sm focus:outline-none">
+                <span id="hud-color" class="text-[10px] font-mono text-neutral-400 uppercase">#FFFFFF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="group border-b border-neutral-800" open>
+        <summary class="flex justify-between items-center px-5 py-3.5 cursor-pointer select-none font-medium hover:bg-neutral-800/50 transition-colors">
+          <span>Trasforma</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 transition-transform group-open:-rotate-180"></i>
+        </summary>
+        <div class="px-5 pb-4">
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div class="bg-neutral-850 rounded p-2.5 border border-neutral-800">
+              <div class="text-[10px] text-neutral-500 mb-1">DIMENSIONE</div>
+              <div id="hud-size" class="text-sm font-mono tabular-nums text-neutral-200">150</div>
+            </div>
+            <div class="bg-neutral-850 rounded p-2.5 border border-neutral-800">
+              <div class="text-[10px] text-neutral-500 mb-1">ROTAZIONE</div>
+              <div id="hud-rot" class="text-sm font-mono tabular-nums text-neutral-200">0°</div>
+            </div>
+            <div class="bg-neutral-850 rounded p-2.5 border border-neutral-800">
+              <div class="text-[10px] text-neutral-500 mb-1">SCALA X / Y</div>
+              <div class="text-sm font-mono tabular-nums text-neutral-200"><span id="hud-sx">1.0</span> / <span id="hud-sy">1.0</span></div>
+            </div>
+            <div class="bg-neutral-850 rounded p-2.5 border border-neutral-800">
+              <div class="text-[10px] text-neutral-500 mb-1">SPESSORE</div>
+              <div id="hud-weight" class="text-sm font-mono tabular-nums text-neutral-200">0</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] text-neutral-500">GRUPPI PIAZZATI</span>
+            <span id="hud-count" class="text-[10px] font-mono tabular-nums text-neutral-400">0</span>
+          </div>
+        </div>
+      </details>
+
+      <details class="group border-b border-neutral-800">
+        <summary class="flex justify-between items-center px-5 py-3.5 cursor-pointer select-none font-medium hover:bg-neutral-800/50 transition-colors">
+          <span>Mappatura Controller</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 transition-transform group-open:-rotate-180"></i>
+        </summary>
+        <div class="px-5 pb-4 space-y-1.5">
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">Levetta Sx</span><span class="text-neutral-500">Muovi cursore</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">Levetta Dx</span><span class="text-neutral-500">Scala X / Y</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">L1 / R1</span><span class="text-neutral-500">Lettera prec / succ</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">L2 / R2</span><span class="text-neutral-500">Ruota</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-200">↑↓ D-pad</span><span class="text-neutral-500">Dimensione</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-200">←→ D-pad</span><span class="text-neutral-500">Spessore</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-blue-400">L3 (click sx)</span><span class="text-neutral-500">Metodo di Fusione</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">✕ Cross</span><span class="text-neutral-500">Piazza Parola</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">○ Circle</span><span class="text-neutral-500">Annulla</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">△ Triangle</span><span class="text-neutral-500">Animazione</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">□ Square</span><span class="text-neutral-500">Cambia font</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-200">Touchpad</span><span class="text-neutral-500">Effetti (incluso Gravità)</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">R3 (click dx)</span><span class="text-neutral-500">Snap griglia</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-200">START (Options)</span><span class="text-neutral-500">Salva PNG (con Sfondo)</span></div>
+          <div class="flex justify-between text-[10px]"><span class="text-neutral-400">SHARE</span><span class="text-neutral-500">Svuota Canvas</span></div>
+        </div>
+      </details>
+
+      <div class="px-5 py-4 space-y-2">
+        <button id="btnSave" class="w-full flex items-center justify-center gap-2 bg-neutral-200 text-black py-2 rounded-md font-medium hover:bg-white transition-colors">
+          <i data-lucide="image" class="w-4 h-4"></i> Esporta PNG
+        </button>
+        <button id="btnGif" class="w-full flex items-center justify-center gap-2 border border-blue-500 text-blue-400 py-2 rounded-md hover:bg-blue-500/10 transition-colors">
+          <i data-lucide="video" class="w-4 h-4"></i> Registra GIF (3s)
+        </button>
+        <button id="btnClear" class="w-full flex items-center justify-center gap-2 border border-neutral-700 py-2 rounded-md hover:bg-neutral-800 transition-colors">
+          <i data-lucide="trash" class="w-4 h-4"></i> Pulisci Canvas
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+  <main class="flex-1 flex items-center justify-center bg-neutral-950 overflow-hidden relative">
+    <div id="canvasWrap" class="relative" style="outline: 1px solid #262626; background: #0a0a0a;"></div>
+    
+    <div id="no-pad-msg" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="text-center bg-neutral-900 px-6 py-4 rounded-md border border-neutral-800">
+        <div class="text-neutral-400 text-[10px] tracking-widest uppercase">In attesa di Controller...</div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="fixed bottom-3.5 right-3.5 bg-neutral-800 border border-neutral-700 text-xs px-3 py-2 rounded-md z-50 pointer-events-none"></div>
+
+  <script src="sketch.js"></script>
+  <script>
+    lucide.createIcons();
+    const $ = id => document.getElementById(id);
+
+    let _toastTimer;
+    function toast(msg) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    $('btnSave').addEventListener('click', () => saveSketch());
+    $('btnGif').addEventListener('click', () => saveGifExport());
+    $('btnClear').addEventListener('click', () => clearAll());
+    
+    $('canvasFormat').addEventListener('change', (e) => {
+      let dims = e.target.value.split(',');
+      changeResolution(parseInt(dims[0]), parseInt(dims[1]));
+    });
+
+    // Gestione del Color Picker nativo
+    $('colorPicker').addEventListener('input', (e) => {
+      // Aggiorna in tempo reale la variabile in sketch.js
+      if (typeof updateColorFromPicker === 'function') {
+        updateColorFromPicker(e.target.value);
+      }
+      $('hud-color').textContent = e.target.value.toUpperCase();
+    });
+
+    window.addEventListener('gamepadconnected', () => { $('no-pad-msg').style.opacity = '0'; });
+    window.addEventListener('gamepaddisconnected', () => { $('no-pad-msg').style.opacity = '1'; });
+  </script>
+</body>
+</html>

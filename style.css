@@ -1,0 +1,51 @@
+:root {
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #262626; /* neutral-800 */
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #525252; /* neutral-600 */
+  }
+  
+  details > summary {
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  /* Toast */
+  #toast {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Canvas Wrapper - per lo scaling ad alta risoluzione */
+  #canvasWrap {
+    transition: transform 0.2s var(--ease-out);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  
+  .char-preview {
+    font-size: 3rem;
+  }
